@@ -37,6 +37,10 @@ def crear_cita(cita: Cita):
     if isinstance(cita.fecha_hora, str):
         cita.fecha_hora = datetime.fromisoformat(cita.fecha_hora)
 
+    # Quitar zona horaria si la tiene
+    if cita.fecha_hora.tzinfo is not None:
+        cita.fecha_hora = cita.fecha_hora.replace(tzinfo=None)
+
     with Session(engine) as session:
         # 1. Buscar el servicio para saber su duración
         servicio = session.get(Servicio, cita.servicio_id)
@@ -67,49 +71,13 @@ def crear_cita(cita: Cita):
         session.add(cita)
         session.commit()
         session.refresh(cita)
-        
-        #Enviar Email
-        # Buscar el nombre del servicio para el email
-        servicio_nombre = servicio.nombre
 
-        # Enviar email de notificación
+        # Enviar email
         enviar_email_cita(
             nombre_cliente=cita.nombre_cliente,
             telefono=cita.telefono,
             fecha_hora=cita.fecha_hora,
-            nombre_servicio=servicio_nombre
+            nombre_servicio=servicio.nombre
         )
+
         return cita
-    
-@app.get("/citas")
-def listar_citas():
-    with Session(engine) as session:
-        citas = session.exec(select(Cita)).all()
-        return citas
-    
-@app.post("/login")
-def login(form: OAuth2PasswordRequestForm = Depends()):
-    with Session(engine) as session:
-        usuario = session.exec(
-            select(Usuario).where(Usuario.username == form.username)
-        ).first()
-
-        if not usuario or not verificar_password(form.password, usuario.password_hash):
-            raise HTTPException(
-                status_code=401,
-                detail="Usuario o contraseña incorrectos."
-            )
-
-        token = crear_token({"sub": usuario.username})
-        return {"access_token": token, "token_type": "bearer"}
-
-
-@app.get("/admin/citas")
-def admin_listar_citas(token: str = Depends(OAuth2PasswordBearer(tokenUrl="login"))):
-    usuario = verificar_token(token)
-    if not usuario:
-        raise HTTPException(status_code=401, detail="No autorizado.")
-
-    with Session(engine) as session:
-        citas = session.exec(select(Cita)).all()
-        return citas        
