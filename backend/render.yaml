@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: peluqueria-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: fastapi run main.py --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_PASSWORD
+        sync: false

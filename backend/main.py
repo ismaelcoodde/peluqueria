@@ -1,0 +1,114 @@
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from auth import verificar_password, crear_token, verificar_token
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from sqlmodel import Session, select
+from datetime import datetime, timedelta
+from database import engine
+from models import Servicio, Cita, Usuario
+from email_service import enviar_email_cita
+
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174"
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def inicio():
+    return {"mensaje": "¡Hola desde la peluquería!"}
+
+@app.get("/servicios")
+def listar_servicios():
+    with Session(engine) as session:
+        servicios = session.exec(select(Servicio)).all()
+        return servicios
+    
+@app.post("/citas")
+def crear_cita(cita: Cita):
+    if isinstance(cita.fecha_hora, str):
+        cita.fecha_hora = datetime.fromisoformat(cita.fecha_hora)
+
+    with Session(engine) as session:
+        # 1. Buscar el servicio para saber su duración
+        servicio = session.get(Servicio, cita.servicio_id)
+        if not servicio:
+            raise HTTPException(
+                status_code=404,
+                detail="El servicio no existe."
+            )
+
+        # 2. Calcular cuándo termina la nueva cita
+        nueva_fin = cita.fecha_hora + timedelta(minutes=servicio.duracion)
+
+        # 3. Buscar citas que se solapen
+        citas_existentes = session.exec(select(Cita)).all()
+        for c in citas_existentes:
+            srv = session.get(Servicio, c.servicio_id)
+            if srv is None:
+                continue
+            existente_fin = c.fecha_hora + timedelta(minutes=srv.duracion)
+
+            # ¿Se solapan?
+            if cita.fecha_hora < existente_fin and nueva_fin > c.fecha_hora:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Horario ocupado. Hay una cita de {c.fecha_hora.strftime('%H:%M')} a {existente_fin.strftime('%H:%M')}."
+                )
+
+        session.add(cita)
+        session.commit()
+        session.refresh(cita)
+        
+        #Enviar Email
+        # Buscar el nombre del servicio para el email
+        servicio_nombre = servicio.nombre
+
+        # Enviar email de notificación
+        enviar_email_cita(
+            nombre_cliente=cita.nombre_cliente,
+            telefono=cita.telefono,
+            fecha_hora=cita.fecha_hora,
+            nombre_servicio=servicio_nombre
+        )
+        return cita
+    
+@app.get("/citas")
+def listar_citas():
+    with Session(engine) as session:
+        citas = session.exec(select(Cita)).all()
+        return citas
+    
+@app.post("/login")
+def login(form: OAuth2PasswordRequestForm = Depends()):
+    with Session(engine) as session:
+        usuario = session.exec(
+            select(Usuario).where(Usuario.username == form.username)
+        ).first()
+
+        if not usuario or not verificar_password(form.password, usuario.password_hash):
+            raise HTTPException(
+                status_code=401,
+                detail="Usuario o contraseña incorrectos."
+            )
+
+        token = crear_token({"sub": usuario.username})
+        return {"access_token": token, "token_type": "bearer"}
+
+
+@app.get("/admin/citas")
+def admin_listar_citas(token: str = Depends(OAuth2PasswordBearer(tokenUrl="login"))):
+    usuario = verificar_token(token)
+    if not usuario:
+        raise HTTPException(status_code=401, detail="No autorizado.")
+
+    with Session(engine) as session:
+        citas = session.exec(select(Cita)).all()
+        return citas        
