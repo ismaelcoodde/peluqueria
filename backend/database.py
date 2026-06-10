@@ -5,7 +5,7 @@ from models import Servicio, Cita, Usuario
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://postgres:Delacruz1946%21@localhost:5432/peluqueria")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL, echo=True)
 
