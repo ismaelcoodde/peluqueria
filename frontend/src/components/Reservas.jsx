@@ -13,7 +13,7 @@ function Reservas() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/servicios")
+    fetch("https://peluqueria-backend-98zw.onrender.com")
       .then(res => res.json())
       .then(data => setServicios(data))
   }, [])
@@ -35,7 +35,7 @@ function Reservas() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/citas", {
+      const res = await fetch("https://peluqueria-backend-98zw.onrender.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cita)

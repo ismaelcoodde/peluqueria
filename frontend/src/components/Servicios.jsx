@@ -4,7 +4,7 @@ function Servicios() {
   const [servicios, setServicios] = useState([])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/servicios")
+    fetch("https://peluqueria-backend-98zw.onrender.com")
       .then(res => res.json())
       .then(data => setServicios(data))
   }, [])

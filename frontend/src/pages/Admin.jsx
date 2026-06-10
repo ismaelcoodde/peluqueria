@@ -15,7 +15,7 @@ function Admin() {
     formData.append('username', username)
     formData.append('password', password)
 
-    const res = await fetch('http://127.0.0.1:8000/login', {
+    const res = await fetch('https://peluqueria-backend-98zw.onrender.com/login', {
       method: 'POST',
       body: formData
     })
@@ -30,7 +30,7 @@ function Admin() {
   }
 
   async function cargarCitas(t) {
-    const res = await fetch('http://127.0.0.1:8000/admin/citas', {
+    const res = await fetch('https://peluqueria-backend-98zw.onrender.com/admin/citas', {
       headers: { Authorization: `Bearer ${t}` }
     })
     const data = await res.json()
