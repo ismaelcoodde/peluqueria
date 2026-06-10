@@ -4,7 +4,7 @@ function Servicios() {
   const [servicios, setServicios] = useState([])
 
   useEffect(() => {
-    fetch("https://peluqueria-backend-98zw.onrender.com")
+    fetch("https://peluqueria-backend-98zw.onrender.com/servicios")
       .then(res => res.json())
       .then(data => setServicios(data))
   }, [])
