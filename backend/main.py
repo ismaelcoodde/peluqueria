@@ -70,4 +70,4 @@ def crear_cita(cita: Cita):
                 detail="El servicio no existe."
             )
 
-        nueva_fin = cita.fecha_hora + timedelta(
+        nueva_fin = cita.fecha_hora + timedelta(minutes=servicio.duracion)
