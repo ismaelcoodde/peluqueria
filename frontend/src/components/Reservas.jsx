@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 function Reservas() {
   const [servicios, setServicios] = useState([])
+  const [cargando, setCargando] = useState(false)
   const [form, setForm] = useState({
     nombre_cliente: "",
     telefono: "",
@@ -24,6 +25,8 @@ function Reservas() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (cargando) return
+    setCargando(true)
     setMensaje(null)
     setError(null)
 
@@ -50,6 +53,8 @@ function Reservas() {
       }
     } catch {
       setError("No se pudo conectar con el servidor.")
+    } finally {
+      setCargando(false)
     }
   }
 
@@ -123,9 +128,10 @@ function Reservas() {
           />
           <button
             type="submit"
-            className="bg-amber-700 hover:bg-amber-600 text-amber-100 py-3 uppercase tracking-widest text-sm transition-colors"
+            disabled={cargando}
+            className="bg-amber-700 hover:bg-amber-600 text-amber-100 py-3 uppercase tracking-widest text-sm transition-colors disabled:opacity-50"
           >
-            Confirmar reserva
+            {cargando ? "Enviando..." : "Confirmar reserva"}
           </button>
         </form>
       </div>

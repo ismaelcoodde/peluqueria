@@ -1,22 +1,14 @@
 import os
-import smtplib
+import resend
 from dotenv import load_dotenv
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 load_dotenv()
 
-GMAIL_USER = os.getenv("GMAIL_USER")
-GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
-EMAIL_DESTINO = os.getenv("GMAIL_USER")
+resend.api_key = os.getenv("RESEND_API_KEY")
+EMAIL_DESTINO = os.getenv("GMAIL_USER")  # te sigues mandando el aviso a ti mismo
 
 def enviar_email_cita(nombre_cliente, telefono, fecha_hora, nombre_servicio):
     try:
-        msg = MIMEMultipart()
-        msg["From"] = GMAIL_USER
-        msg["To"] = EMAIL_DESTINO
-        msg["Subject"] = f"Nueva cita - {nombre_cliente}"
-
         cuerpo = (
             f"Nueva reserva recibida:\n\n"
             f"Cliente: {nombre_cliente}\n"
@@ -26,13 +18,15 @@ def enviar_email_cita(nombre_cliente, telefono, fecha_hora, nombre_servicio):
             f"Esta cita esta pendiente de confirmacion."
         )
 
-        msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
+        params: resend.Emails.SendParams = {
+            "from": "Peluqueria <onboarding@resend.dev>",
+            "to": [EMAIL_DESTINO],
+            "subject": f"Nueva cita - {nombre_cliente}",
+            "text": cuerpo,
+        }
 
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(GMAIL_USER, GMAIL_PASSWORD)
-            server.sendmail(GMAIL_USER, EMAIL_DESTINO, msg.as_string())
-
-        print("Email enviado correctamente")
+        email = resend.Emails.send(params)
+        print(f"Email enviado correctamente: {email}")
 
     except Exception as e:
         print(f"Error al enviar email: {e}")
