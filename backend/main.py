@@ -71,3 +71,29 @@ def crear_cita(cita: Cita):
             )
 
         nueva_fin = cita.fecha_hora + timedelta(minutes=servicio.duracion)
+
+        citas_existentes = session.exec(select(Cita)).all()
+        for c in citas_existentes:
+            srv = session.get(Servicio, c.servicio_id)
+            if srv is None:
+                continue
+            existente_fin = c.fecha_hora + timedelta(minutes=srv.duracion)
+
+            if cita.fecha_hora < existente_fin and nueva_fin > c.fecha_hora:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Horario ocupado. Hay una cita de {c.fecha_hora.strftime('%H:%M')} a {existente_fin.strftime('%H:%M')}."
+                )
+
+        session.add(cita)
+        session.commit()
+        session.refresh(cita)
+
+        enviar_email_cita(
+            nombre_cliente=cita.nombre_cliente,
+            telefono=cita.telefono,
+            fecha_hora=cita.fecha_hora,
+            nombre_servicio=servicio.nombre
+        )
+
+        return cita
