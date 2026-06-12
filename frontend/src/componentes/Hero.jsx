@@ -7,6 +7,7 @@ function Hero() {
         autoPlay
         loop
         muted
+        playsInline
       ></video>
       <div className="bg-black absolute inset-0 opacity-60"></div>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
