@@ -62,12 +62,12 @@ function Reservas() {
     }
   }
   return (
-    <section id="reservas" className="bg-black text-white py-20 px-8">
+    <section id="reservas" className="bg-stone-700 text-white py-20 px-8">
       <h1 className="text-4xl font-bold text-center mb-12">Reservar Cita</h1>
       {mensaje && <div>{mensaje}</div>}
       {error && <div>{error}</div>}
       <form className="flex flex-col gap-6 mx-auto max-w-lg" onSubmit={handleSubmit}>
-        <input className="bg-black border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+        <input className="bg-stone-600 border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
           name="nombre_cliente"
           value={form.nombre_cliente}
           onChange={handleChange}
@@ -75,7 +75,7 @@ function Reservas() {
           required
         />
 
-        <input className="bg-black border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+        <input className="bg-stone-600 border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
           name="telefono"
           value={form.telefono}
           onChange={handleChange}
@@ -83,7 +83,7 @@ function Reservas() {
           required
         />
 
-        <select className="bg-black border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+        <select className="bg-stone-600 border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
           name="servicio_id"
           value={form.servicio_id}
           onChange={handleChange}
@@ -97,7 +97,7 @@ function Reservas() {
           ))}
         </select>
 
-        <input className="bg-black border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+        <input className="bg-stone-600 border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
           name="fecha"
           type="date"
           value={form.fecha}
@@ -105,14 +105,14 @@ function Reservas() {
           required
         />
 
-        <input className="bg-black border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+        <input className="bg-stone-600 border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
           name="hora"
           type="time"
           value={form.hora}
           onChange={handleChange}
           required
         />
-        <button className="bg-black border border-white text-white px-8 py-3 hover:bg-white hover:text-black transition duration-300 w-full" type="submit">Confirmar reserva</button>
+        <button className="bg-stone-600 border border-white text-white px-8 py-3 hover:bg-white hover:text-black transition duration-300 w-full" type="submit">Confirmar reserva</button>
       </form>
     </section>
   );
