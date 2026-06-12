@@ -3,7 +3,7 @@ function Navbar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   return (
-    <nav className="bg-gray-900 text-white p-5 fixed top-0 left-0 right-0 z-50">
+    <nav className="bg-gray-900 text-white p-7 fixed top-0 left-0 right-0 z-50">
       <div className="flex justify-between">
         <div>Logo</div>
         <div className="gap-4 hidden md:flex">
@@ -22,7 +22,7 @@ function Navbar() {
         </div>
         <button
           onClick={() => setMenuAbierto(!menuAbierto)}
-          className="md:hidden"
+          className="md:hidden text-3xl"
         >
           {menuAbierto ? "X" : "☰"}
         </button>
