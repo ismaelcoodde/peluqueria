@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 function Navbar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() =>{
+    window.addEventListener('scroll', () => {
+      setScrolled(window.scrollY > 50)
+    })
+  }, [])
 
   return (
-    <nav className="bg-gray-900 text-white p-7 fixed top-0 left-0 right-0 z-50">
+    <nav className={`${scrolled ? "bg-gray-900" : "bg-transparent"} text-white p-7 fixed top-0 left-0 right-0 z-50`}>
       <div className="flex justify-between">
         <div>Logo</div>
         <div className="gap-4 hidden md:flex">
