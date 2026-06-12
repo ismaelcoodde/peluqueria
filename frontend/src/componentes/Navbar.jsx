@@ -10,7 +10,7 @@ function Navbar() {
   }, [])
 
   return (
-    <nav className={`${scrolled ? "bg-black/80" : "bg-transparent transition-all duration-300"} text-white p-7 fixed top-0 left-0 right-0 z-50`}>
+    <nav className={`${scrolled ? "bg-black/80" : "bg-transparent transition-all duration-900"} text-white p-7 fixed top-0 left-0 right-0 z-50`}>
       <div className="flex justify-between">
         <div>Logo</div>
         <div className="gap-4 hidden md:flex">
