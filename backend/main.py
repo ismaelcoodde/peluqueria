@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from database import engine
 from models import Servicio, Cita, Usuario
 from email_service import enviar_email_cita
+from pydantic import BaseModel
 
 
 app = FastAPI()
@@ -97,3 +98,28 @@ def crear_cita(cita: Cita):
         )
 
         return cita
+    
+
+
+class CambioEstado(BaseModel):
+    estado: str
+
+@app.patch("/admin/citas/{cita_id}/estado")
+def cambiar_estado_cita(cita_id: int, body: CambioEstado, token: str = Depends(oauth2_scheme)):
+    usuario = verificar_token(token)
+    if not usuario:
+        raise HTTPException(status_code=401, detail="Token inválido")
+
+    estados_validos = {"pendiente", "confirmada", "cancelada"}
+    if body.estado not in estados_validos:
+        raise HTTPException(status_code=400, detail="Estado no válido")
+
+    with Session(engine) as session:
+        cita = session.get(Cita, cita_id)
+        if not cita:
+            raise HTTPException(status_code=404, detail="Cita no encontrada")
+        cita.estado = body.estado
+        session.add(cita)
+        session.commit()
+        session.refresh(cita)
+        return cita   
