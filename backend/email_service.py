@@ -30,3 +30,25 @@ def enviar_email_cita(nombre_cliente, telefono, fecha_hora, nombre_servicio):
 
     except Exception as e:
         print(f"Error al enviar email: {e}")
+        
+ def enviar_email_estado(email_cliente, nombre_cliente, estado, fecha_hora):
+    try:
+        if estado == "confirmada":
+            mensaje = f"Tu cita del {fecha_hora.strftime('%d/%m/%Y a las %H:%M')} ha sido CONFIRMADA. ¡Te esperamos!"
+        elif estado == "cancelada":
+            mensaje = f"Tu cita del {fecha_hora.strftime('%d/%m/%Y a las %H:%M')} ha sido CANCELADA. Disculpa las molestias."
+        else:
+            return
+
+        params: resend.Emails.SendParams = {
+            "from": "Peluqueria <onboarding@resend.dev>",
+            "to": [email_cliente],
+            "subject": f"Tu cita - {estado}",
+            "text": mensaje,
+        }
+
+        email = resend.Emails.send(params)
+        print(f"Email de estado enviado: {email}")
+
+    except Exception as e:
+        print(f"Error al enviar email de estado: {e}")       

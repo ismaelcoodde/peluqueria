@@ -6,7 +6,7 @@ from sqlmodel import Session, select
 from datetime import datetime, timedelta
 from database import engine
 from models import Servicio, Cita, Usuario
-from email_service import enviar_email_cita
+from email_service import enviar_email_cita, enviar_email_estado
 from pydantic import BaseModel
 
 
@@ -122,4 +122,11 @@ def cambiar_estado_cita(cita_id: int, body: CambioEstado, token: str = Depends(o
         session.add(cita)
         session.commit()
         session.refresh(cita)
+        if cita.email:
+            enviar_email_estado(
+        email_cliente=cita.email,
+        nombre_cliente=cita.nombre_cliente,
+        estado=cita.estado,
+        fecha_hora=cita.fecha_hora
+    )
         return cita   
