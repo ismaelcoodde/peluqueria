@@ -11,6 +11,7 @@ class Cita(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nombre_cliente: str
     telefono: str
+    email: str
     fecha_hora: datetime
     servicio_id: int = Field(foreign_key="servicio.id")
     estado: str = "pendiente"    

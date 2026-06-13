@@ -12,6 +12,7 @@ function Reservas() {
   const [form, setForm] = useState({
     nombre_cliente: "",
     telefono: "",
+    email: "",
     fecha: "",
     hora: "",
     servicio_id: "",
@@ -31,6 +32,7 @@ function Reservas() {
     const cita = {
       nombre_cliente: form.nombre_cliente,
       telefono: form.telefono,
+      email: form.cita,
       fecha_hora: `${form.fecha}T${form.hora}:00`,
       servicio_id: parseInt(form.servicio_id),
     };
@@ -49,6 +51,7 @@ function Reservas() {
         setForm({
           nombre_cliente: "",
           telefono: "",
+          email: "",
           fecha: "",
           hora: "",
           servicio_id: "",
@@ -85,6 +88,16 @@ function Reservas() {
           value={form.telefono}
           onChange={handleChange}
           placeholder="Tu teléfono"
+          required
+        />
+
+        <input
+          className="bg-stone-600 border border-gray-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          placeholder="Tu email"
           required
         />
 
