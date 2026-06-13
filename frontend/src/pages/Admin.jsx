@@ -73,35 +73,59 @@ function Admin() {
     }
   }
 
+  function cerrarSesion() {
+    sessionStorage.removeItem("token");
+    setLogueado(false);
+  }
+
+  function colorEstado(estado) {
+  if (estado === "confirmada") return "bg-green-700 border-green-500"
+  if (estado === "cancelada") return "bg-red-800 border-red-600"
+  return "bg-yellow-700 border-yellow-500"
+}
+
   return logueado ? (
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Cliente</th>
-          <th>Teléfono</th>
-          <th>Fecha y hora</th>
-          <th>Servicio</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        {citas.map((cita) => (
-          <tr key={cita.id}>
-            <td>{cita.id}</td>
-            <td>{cita.nombre_cliente}</td>
-            <td>{cita.telefono}</td>
-            <td>
-              {new Date(cita.fecha_hora).toLocaleDateString("es-ES")} a las{" "}
-              {new Date(cita.fecha_hora).toLocaleTimeString("es-ES", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </td>{" "}
-            <td>{servicios.find((s) => s.id === cita.servicio_id)?.nombre}</td>
-            <td>
-              <td>
+  <div className="min-h-screen bg-stone-900 text-white p-8">
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-3xl font-bold">Panel de reservas</h1>
+      <button
+        onClick={cerrarSesion}
+        className="border border-stone-500 text-stone-400 hover:border-white hover:text-white px-4 py-2 text-sm transition duration-300"
+      >
+        Cerrar sesión
+      </button>
+    </div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="bg-stone-800 text-stone-400 text-left">
+            <th className="px-4 py-3">ID</th>
+            <th className="px-4 py-3">Cliente</th>
+            <th className="px-4 py-3">Teléfono</th>
+            <th className="px-4 py-3">Fecha y hora</th>
+            <th className="px-4 py-3">Servicio</th>
+            <th className="px-4 py-3">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {citas.map((cita) => (
+            <tr key={cita.id} className="border-t border-stone-700 hover:bg-stone-800 transition duration-200">
+              <td className="px-4 py-4 text-stone-400">{cita.id}</td>
+              <td className="px-4 py-4 font-medium">{cita.nombre_cliente}</td>
+              <td className="px-4 py-4 text-stone-300">{cita.telefono}</td>
+              <td className="px-4 py-4 text-stone-300">
+                {new Date(cita.fecha_hora).toLocaleDateString("es-ES")} a las{" "}
+                {new Date(cita.fecha_hora).toLocaleTimeString("es-ES", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </td>
+              <td className="px-4 py-4 text-stone-300">
+                {servicios.find((s) => s.id === cita.servicio_id)?.nombre}
+              </td>
+              <td className="px-4 py-4">
                 <select
+                  className={`${colorEstado(cita.estado)} border text-white px-3 py-1 focus:outline-none`}
                   value={cita.estado}
                   onChange={(e) => cambiarEstado(cita.id, e.target.value)}
                 >
@@ -110,27 +134,41 @@ function Admin() {
                   <option value="cancelada">Cancelada</option>
                 </select>
               </td>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ) : (
-    <>
-      <input
-        type="text"
-        value={usuario}
-        onChange={(e) => setUsuario(e.target.value)}
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="button" onClick={handleLogin}>
-        Entrar
-      </button>
-    </>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+) : (
+    <div className="min-h-screen bg-stone-900 flex items-center justify-center">
+      <div className="bg-stone-800 p-10 w-full max-w-sm flex flex-col gap-4">
+        <h1 className="text-white text-3xl font-bold text-center mb-4">
+          Admin
+        </h1>
+        <input
+          className="bg-stone-700 border border-stone-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+          type="text"
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+          placeholder="Usuario"
+        />
+        <input
+          className="bg-stone-700 border border-stone-500 text-white px-4 py-3 focus:outline-none focus:border-white"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Contraseña"
+        />
+        <button
+          className="bg-stone-700 border border-white text-white px-8 py-3 hover:bg-white hover:text-black transition duration-300"
+          type="button"
+          onClick={handleLogin}
+        >
+          Entrar
+        </button>
+      </div>
+    </div>
   );
 }
 
