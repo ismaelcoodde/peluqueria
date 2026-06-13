@@ -32,7 +32,7 @@ function Reservas() {
     const cita = {
       nombre_cliente: form.nombre_cliente,
       telefono: form.telefono,
-      email: form.cita,
+      email: form.email,
       fecha_hora: `${form.fecha}T${form.hora}:00`,
       servicio_id: parseInt(form.servicio_id),
     };
