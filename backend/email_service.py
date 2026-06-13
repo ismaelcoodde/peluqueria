@@ -31,7 +31,7 @@ def enviar_email_cita(nombre_cliente, telefono, fecha_hora, nombre_servicio):
     except Exception as e:
         print(f"Error al enviar email: {e}")
         
- def enviar_email_estado(email_cliente, nombre_cliente, estado, fecha_hora):
+def enviar_email_estado(email_cliente, nombre_cliente, estado, fecha_hora):
     try:
         if estado == "confirmada":
             mensaje = f"Tu cita del {fecha_hora.strftime('%d/%m/%Y a las %H:%M')} ha sido CONFIRMADA. ¡Te esperamos!"
